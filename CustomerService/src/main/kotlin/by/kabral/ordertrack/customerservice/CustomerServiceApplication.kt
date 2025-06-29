@@ -1,4 +1,4 @@
-package by.kabral.customerservice
+package by.kabral.ordertrack.customerservice
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication

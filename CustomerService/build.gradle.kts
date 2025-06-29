@@ -6,7 +6,7 @@ plugins {
     kotlin("plugin.jpa") version "1.9.25"
 }
 
-group = "by.kabral"
+group = "by.kabral.ordertrack"
 version = "0.0.1-SNAPSHOT"
 
 java {
@@ -22,19 +22,20 @@ repositories {
 extra["springCloudVersion"] = "2025.0.0"
 
 object Versions {
-    const val modelMapper = "3.2.4"
+    const val modelmapper = "3.2.4"
 }
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.flywaydb:flyway-core")
     implementation("org.flywaydb:flyway-database-postgresql")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
     implementation("org.springframework.kafka:spring-kafka")
-    implementation("org.modelmapper:modelmapper:${Versions.modelMapper}")
+    implementation("org.modelmapper:modelmapper:${Versions.modelmapper}")
     runtimeOnly("org.postgresql:postgresql")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")

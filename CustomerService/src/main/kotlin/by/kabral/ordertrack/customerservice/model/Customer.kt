@@ -1,4 +1,4 @@
-package by.kabral.customerservice.model
+package by.kabral.ordertrack.customerservice.model
 
 import jakarta.persistence.*
 import java.util.UUID

@@ -1,7 +1,7 @@
-package by.kabral.customerservice.mapper
+package by.kabral.ordertrack.customerservice.mapper
 
-import by.kabral.customerservice.dto.CustomerDto
-import by.kabral.customerservice.model.Customer
+import by.kabral.ordertrack.customerservice.dto.CustomerDto
+import by.kabral.ordertrack.customerservice.model.Customer
 import org.modelmapper.ModelMapper
 import org.springframework.stereotype.Component
 

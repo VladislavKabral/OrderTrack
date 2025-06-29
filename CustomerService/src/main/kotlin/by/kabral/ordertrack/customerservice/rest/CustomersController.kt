@@ -1,8 +1,9 @@
-package by.kabral.customerservice.rest
+package by.kabral.ordertrack.customerservice.rest
 
-import by.kabral.customerservice.dto.CustomerDto
-import by.kabral.customerservice.dto.CustomersDto
-import by.kabral.customerservice.service.CustomersService
+import by.kabral.ordertrack.customerservice.dto.CustomerDto
+import by.kabral.ordertrack.customerservice.dto.CustomersDto
+import by.kabral.ordertrack.customerservice.service.CustomersService
+import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import java.util.UUID
@@ -21,11 +22,11 @@ class CustomersController(val customersService: CustomersService) {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    fun saveCustomer(@RequestBody customer: CustomerDto): CustomerDto = customersService.save(customer)
+    fun saveCustomer(@RequestBody @Valid customer: CustomerDto): CustomerDto = customersService.save(customer)
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    fun updateCustomer(@PathVariable("id") id: UUID, @RequestBody customer: CustomerDto): CustomerDto =
+    fun updateCustomer(@PathVariable("id") id: UUID, @RequestBody @Valid customer: CustomerDto): CustomerDto =
         customersService.update(id, customer)
 
     @DeleteMapping("/{id}")
