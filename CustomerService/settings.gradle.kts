@@ -1,2 +1,2 @@
 rootProject.name = "CustomerService"
-include(":CommonLib")
+include(":Сommon")

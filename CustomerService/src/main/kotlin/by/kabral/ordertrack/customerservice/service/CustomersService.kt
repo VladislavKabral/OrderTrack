@@ -2,11 +2,12 @@ package by.kabral.ordertrack.customerservice.service
 
 import by.kabral.ordertrack.customerservice.dto.CustomerDto
 import by.kabral.ordertrack.customerservice.dto.CustomersDto
-import by.kabral.ordertrack.customerservice.exception.EntityNotFoundException
 import by.kabral.ordertrack.customerservice.mapper.CustomersMapper
 import by.kabral.ordertrack.customerservice.repository.CustomersRepository
 import by.kabral.ordertrack.customerservice.util.Message
 import by.kabral.ordertrack.customerservice.util.validator.CustomersValidator
+import by.kabral.ordertrack.dto.RemovedEntityDto
+import by.kabral.ordertrack.exception.EntityNotFoundException
 
 import org.springframework.stereotype.Service
 import java.util.*
@@ -41,13 +42,13 @@ class CustomersService(
         return customersMapper.toDto(customersRepository.save(customer))
     }
 
-    fun deleteById(id: UUID) : UUID {
+    fun deleteById(id: UUID) : RemovedEntityDto {
         if (!customersRepository.existsById(id)) {
             throw EntityNotFoundException(String.format(Message.USER_NOT_FOUND, id))
         }
 
         customersRepository.deleteById(id)
 
-        return id
+        return RemovedEntityDto(id)
     }
 }

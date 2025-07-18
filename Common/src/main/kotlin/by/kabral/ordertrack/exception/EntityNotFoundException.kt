@@ -1,3 +1,3 @@
-package by.kabral.ordertrack.customerservice.exception
+package by.kabral.ordertrack.exception
 
 class EntityNotFoundException(message: String?) : Exception(message)

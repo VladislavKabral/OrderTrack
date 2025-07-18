@@ -1,8 +1,8 @@
 package by.kabral.ordertrack.customerservice.rest.advice
 
 import by.kabral.ordertrack.customerservice.dto.ErrorResponseDto
-import by.kabral.ordertrack.customerservice.exception.BusinessException
-import by.kabral.ordertrack.customerservice.exception.EntityNotFoundException
+import by.kabral.ordertrack.exception.BusinessException
+import by.kabral.ordertrack.exception.EntityNotFoundException
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler

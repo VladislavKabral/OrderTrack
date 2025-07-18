@@ -3,6 +3,7 @@ package by.kabral.ordertrack.customerservice.rest
 import by.kabral.ordertrack.customerservice.dto.CustomerDto
 import by.kabral.ordertrack.customerservice.dto.CustomersDto
 import by.kabral.ordertrack.customerservice.service.CustomersService
+import by.kabral.ordertrack.dto.RemovedEntityDto
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
@@ -31,5 +32,5 @@ class CustomersController(val customersService: CustomersService) {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    fun deleteCustomer(@PathVariable("id") id: UUID) : UUID = customersService.deleteById(id)
+    fun deleteCustomer(@PathVariable("id") id: UUID) : RemovedEntityDto = customersService.deleteById(id)
 }
