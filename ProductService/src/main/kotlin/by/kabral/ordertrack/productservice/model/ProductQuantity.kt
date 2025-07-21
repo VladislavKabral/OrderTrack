@@ -19,7 +19,7 @@ data class ProductQuantity(
 
     @OneToOne
     @JoinColumn(name = "product_id", nullable = false, unique = true)
-    val product: Product,
+    var product: Product?,
 
     @Column(name = "quantity")
     var quantity: Long,
