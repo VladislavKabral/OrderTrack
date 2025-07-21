@@ -1,4 +1,4 @@
-package by.kabral.ordertrack.customerservice.dto
+package by.kabral.ordertrack.dto
 
 import java.time.ZonedDateTime
 
