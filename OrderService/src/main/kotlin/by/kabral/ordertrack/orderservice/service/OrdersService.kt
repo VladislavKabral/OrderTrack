@@ -14,6 +14,8 @@ import by.kabral.ordertrack.orderservice.repository.OrdersRepository
 import by.kabral.ordertrack.orderservice.util.Message.CUSTOMER_NOT_FOUND
 import by.kabral.ordertrack.orderservice.util.Message.ORDER_NOT_FOUND
 import by.kabral.ordertrack.orderservice.util.Message.PRODUCT_NOT_FOUND
+import by.kabral.ordertrack.util.Constant.CUSTOMER_EXISTENCE_CACHE
+import by.kabral.ordertrack.util.Constant.PRODUCT_AVAILABILITY_CACHE
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import java.util.UUID
@@ -24,7 +26,8 @@ class OrdersService(
     private val ordersMapper: OrdersMapper,
     private val customerServiceClient: CustomerServiceClient,
     private val productServiceClient: ProductServiceClient,
-    private val paymentServiceClient: PaymentServiceClient
+    private val paymentServiceClient: PaymentServiceClient,
+    private val cacheService: CacheService
 ) {
 
     fun findAll() : OrdersDto {
@@ -42,16 +45,33 @@ class OrdersService(
         order.id = UUID.randomUUID()
         order.createdAt = LocalDateTime.now()
 
-        val customerExistence = customerServiceClient.isCustomerPresent(order.customerId)
+        val customerExistenceKey = cacheService.getCacheKey(
+            entityType = CUSTOMER_EXISTENCE_CACHE,
+            entityId = order.customerId
+        )
+        val productAvailabilityKey = cacheService.getCacheKey(
+            entityType = PRODUCT_AVAILABILITY_CACHE,
+            entityId = order.productId
+        )
+
+        var customerExistence = cacheService.getCustomerExistence(customerExistenceKey)
+        if (customerExistence == null) {
+            customerExistence = customerServiceClient.isCustomerPresent(order.customerId)
+            cacheService.put(customerExistenceKey, customerExistence)
+        }
         if (!customerExistence.isPresent) {
             throw EntityNotFoundException(String.format(CUSTOMER_NOT_FOUND, order.customerId))
         }
 
-        val productAvailability = productServiceClient.checkAvailability(
-            id = order.productId,
-            count = order.count,
-            totalAmount = order.totalAmount
-        )
+        var productAvailability = cacheService.getProductAvailability(productAvailabilityKey)
+        if (productAvailability == null) {
+            productAvailability = productServiceClient.checkAvailability(
+                id = order.productId,
+                count = order.count,
+                totalAmount = order.totalAmount
+            )
+            cacheService.put(productAvailabilityKey, productAvailability)
+        }
         if (!productAvailability.isPresent) {
             throw EntityNotFoundException(String.format(PRODUCT_NOT_FOUND, order.productId))
         }

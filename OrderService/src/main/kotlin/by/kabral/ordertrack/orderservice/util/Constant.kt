@@ -6,4 +6,5 @@ object Constant {
     const val CLIENT_ERROR_MAX_STATUS = 499
     const val SERVER_ERROR_MIN_STATUS = 500
     const val SERVER_ERROR_MAX_STATUS = 599
+    const val DEFAULT_TTL = 1L
 }

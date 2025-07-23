@@ -20,7 +20,8 @@ class CustomersService(
     private val customersRepository: CustomersRepository,
     private val customersMapper: CustomersMapper,
     private val customersValidator: CustomersValidator,
-    private val kafkaProducer: KafkaProducer
+    private val kafkaProducer: KafkaProducer,
+    private val cacheService: CacheService
 ) {
 
     fun findAll() : CustomersDto = CustomersDto(customersRepository.findAll().map { customersMapper.toDto(it) })
@@ -66,6 +67,7 @@ class CustomersService(
         }
 
         customersRepository.deleteById(id)
+        cacheService.deleteCachedValue(id)
 
         return RemovedEntityDto(id)
     }

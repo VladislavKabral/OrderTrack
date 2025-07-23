@@ -11,6 +11,10 @@ spring:
     password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
+  redis:
+    host: host.docker.internal
+    port: 6379
+
 eureka:
   client:
     service-url:

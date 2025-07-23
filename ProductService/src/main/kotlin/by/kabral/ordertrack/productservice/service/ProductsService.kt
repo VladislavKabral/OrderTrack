@@ -18,7 +18,8 @@ import java.util.*
 class ProductsService(
     private val productsRepository: ProductsRepository,
     private val productsMapper: ProductsMapper,
-    private val productsValidator: ProductsValidator
+    private val productsValidator: ProductsValidator,
+    private val cacheService: CacheService
 ) {
 
     fun findAll() : ProductsDto {
@@ -74,6 +75,8 @@ class ProductsService(
         entity.price = dto.price
         entity.quantity.quantity = dto.quantity.quantity
 
+        cacheService.deleteCachedValue(id)
+
         return productsMapper.toDto(productsRepository.save(entity))
     }
 
@@ -83,6 +86,7 @@ class ProductsService(
         }
 
         productsRepository.deleteById(id)
+        cacheService.deleteCachedValue(id)
 
         return RemovedEntityDto(id)
     }

@@ -18,6 +18,10 @@ spring:
     value_default_type: by.kabral.ordertrack.dto.AccountDto
     trusted_packages: by.kabral.ordertrack.*
 
+  redis:
+    host: host.docker.internal
+    port: 6379
+
 eureka:
   client:
     service-url:

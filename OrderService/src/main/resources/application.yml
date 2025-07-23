@@ -12,6 +12,10 @@ spring:
       database: ${DB_NAME}
       uuid-representation: standard
 
+    redis:
+      host: host.docker.internal
+      port: 6379
+
 eureka:
   client:
     service-url:
