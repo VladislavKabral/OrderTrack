@@ -1,7 +1,7 @@
 package by.kabral.ordertrack.paymentservice.util.validator
 
+import by.kabral.ordertrack.dto.AccountDto
 import by.kabral.ordertrack.exception.BusinessException
-import by.kabral.ordertrack.paymentservice.dto.AccountDto
 import by.kabral.ordertrack.paymentservice.repository.AccountsRepository
 import by.kabral.ordertrack.paymentservice.util.Message.ACCOUNT_ALREADY_EXISTS
 import by.kabral.ordertrack.validator.Validator

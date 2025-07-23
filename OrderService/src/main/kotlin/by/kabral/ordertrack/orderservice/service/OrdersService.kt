@@ -1,7 +1,7 @@
 package by.kabral.ordertrack.orderservice.service
 
 import by.kabral.ordertrack.dto.PaymentDto
-import by.kabral.ordertrack.enum.PaymentStatus
+import by.kabral.ordertrack.enums.PaymentStatus
 import by.kabral.ordertrack.exception.EntityNotFoundException
 import by.kabral.ordertrack.orderservice.client.CustomerServiceClient
 import by.kabral.ordertrack.orderservice.client.PaymentServiceClient

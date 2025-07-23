@@ -2,10 +2,12 @@ package by.kabral.ordertrack.customerservice.service
 
 import by.kabral.ordertrack.customerservice.dto.CustomerDto
 import by.kabral.ordertrack.customerservice.dto.CustomersDto
+import by.kabral.ordertrack.customerservice.kafka.KafkaProducer
 import by.kabral.ordertrack.customerservice.mapper.CustomersMapper
 import by.kabral.ordertrack.customerservice.repository.CustomersRepository
 import by.kabral.ordertrack.customerservice.util.Message
 import by.kabral.ordertrack.customerservice.util.validator.CustomersValidator
+import by.kabral.ordertrack.dto.AccountDto
 import by.kabral.ordertrack.dto.RemovedEntityDto
 import by.kabral.ordertrack.dto.CustomerExistenceDto
 import by.kabral.ordertrack.exception.EntityNotFoundException
@@ -17,7 +19,8 @@ import java.util.*
 class CustomersService(
     private val customersRepository: CustomersRepository,
     private val customersMapper: CustomersMapper,
-    private val customersValidator: CustomersValidator
+    private val customersValidator: CustomersValidator,
+    private val kafkaProducer: KafkaProducer
 ) {
 
     fun findAll() : CustomersDto = CustomersDto(customersRepository.findAll().map { customersMapper.toDto(it) })
@@ -32,7 +35,17 @@ class CustomersService(
     fun save(dto: CustomerDto) : CustomerDto {
         customersValidator.validate(dto)
         val customer = customersMapper.toEntity(dto)
-        return customersMapper.toDto(customersRepository.save(customer))
+        val newCustomer = customersMapper.toDto(customersRepository.save(customer))
+
+        val account = AccountDto(
+            id = null,
+            customerId = newCustomer.id!!,
+            balance = null,
+            status = null
+        )
+        kafkaProducer.send(account)
+
+        return newCustomer
     }
 
     fun update(id: UUID, dto: CustomerDto) : CustomerDto {

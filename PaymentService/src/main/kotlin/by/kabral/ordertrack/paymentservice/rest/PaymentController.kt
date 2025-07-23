@@ -1,8 +1,8 @@
 package by.kabral.ordertrack.paymentservice.rest
 
+import by.kabral.ordertrack.dto.AccountDto
 import by.kabral.ordertrack.dto.PaymentDto
 import by.kabral.ordertrack.paymentservice.dto.AccountBalanceDto
-import by.kabral.ordertrack.paymentservice.dto.AccountDto
 import by.kabral.ordertrack.paymentservice.dto.AccountStatusDto
 import by.kabral.ordertrack.paymentservice.dto.AccountsDto
 import by.kabral.ordertrack.paymentservice.service.PaymentService

@@ -1,6 +1,6 @@
 package by.kabral.ordertrack.dto
 
-import by.kabral.ordertrack.enum.PaymentStatus
+import by.kabral.ordertrack.enums.PaymentStatus
 import java.math.BigDecimal
 import java.util.*
 

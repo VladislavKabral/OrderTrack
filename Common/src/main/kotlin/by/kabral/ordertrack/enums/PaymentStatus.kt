@@ -1,4 +1,4 @@
-package by.kabral.ordertrack.enum
+package by.kabral.ordertrack.enums
 
 enum class PaymentStatus {
     IN_PROGRESS,
