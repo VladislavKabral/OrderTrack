@@ -1,17 +1,18 @@
 package by.kabral.ordertrack.paymentservice.service
 
+import by.kabral.ordertrack.dto.PaymentDto
 import by.kabral.ordertrack.enum.PaymentStatus
 import by.kabral.ordertrack.exception.EntityNotFoundException
 import by.kabral.ordertrack.paymentservice.dto.AccountBalanceDto
 import by.kabral.ordertrack.paymentservice.dto.AccountDto
 import by.kabral.ordertrack.paymentservice.dto.AccountStatusDto
 import by.kabral.ordertrack.paymentservice.dto.AccountsDto
-import by.kabral.ordertrack.paymentservice.dto.PaymentDto
 import by.kabral.ordertrack.paymentservice.mapper.AccountsMapper
 import by.kabral.ordertrack.paymentservice.model.Account
 import by.kabral.ordertrack.paymentservice.model.AccountStatus
 import by.kabral.ordertrack.paymentservice.repository.AccountsRepository
 import by.kabral.ordertrack.paymentservice.util.Message.ACCOUNT_NOT_FOUND
+import by.kabral.ordertrack.paymentservice.util.Message.CUSTOMER_DOES_NOT_HAVE_ACCOUNT
 import by.kabral.ordertrack.paymentservice.util.validator.AccountsValidator
 import by.kabral.ordertrack.paymentservice.util.validator.BalanceValidator
 import org.springframework.http.HttpStatus
@@ -39,15 +40,18 @@ class PaymentService(
     }
 
     fun makePayment(payment: PaymentDto) : ResponseEntity<PaymentDto> {
-        if (!accountsRepository.existsById(payment.accountId)) {
-            throw EntityNotFoundException(String.format(ACCOUNT_NOT_FOUND, payment.accountId))
+        if (!accountsRepository.existsByCustomerIdAndStatus(payment.customerId, AccountStatus.ACTIVE)) {
+            throw EntityNotFoundException(String.format(CUSTOMER_DOES_NOT_HAVE_ACCOUNT, payment.customerId))
         }
 
-        val account = accountsRepository.findById(payment.accountId).get()
+        val account = accountsRepository.findByCustomerIdAndStatus(
+            customerId = payment.customerId,
+            status = AccountStatus.ACTIVE
+        ).get()
 
         if (account.balance!!.minus(payment.amount) < BigDecimal.ZERO) {
             payment.status = PaymentStatus.NOT_ENOUGH_MONEY
-            return ResponseEntity(payment, HttpStatus.UNPROCESSABLE_ENTITY)
+            return ResponseEntity(payment, HttpStatus.OK)
         }
 
         account.balance = account.balance!!.minus(payment.amount)

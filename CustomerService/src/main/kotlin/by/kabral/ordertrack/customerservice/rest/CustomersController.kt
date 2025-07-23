@@ -3,6 +3,7 @@ package by.kabral.ordertrack.customerservice.rest
 import by.kabral.ordertrack.customerservice.dto.CustomerDto
 import by.kabral.ordertrack.customerservice.dto.CustomersDto
 import by.kabral.ordertrack.customerservice.service.CustomersService
+import by.kabral.ordertrack.dto.CustomerExistenceDto
 import by.kabral.ordertrack.dto.RemovedEntityDto
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
@@ -20,6 +21,11 @@ class CustomersController(val customersService: CustomersService) {
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     fun getCustomer(@PathVariable("id") id: UUID): CustomerDto = customersService.findById(id)
+
+    @GetMapping("/{id}/isPresent")
+    @ResponseStatus(HttpStatus.OK)
+    fun isCustomerPresent(@PathVariable("id") id: UUID) : CustomerExistenceDto =
+        customersService.customerExists(id)
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

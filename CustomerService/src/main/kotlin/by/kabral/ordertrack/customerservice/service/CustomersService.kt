@@ -7,6 +7,7 @@ import by.kabral.ordertrack.customerservice.repository.CustomersRepository
 import by.kabral.ordertrack.customerservice.util.Message
 import by.kabral.ordertrack.customerservice.util.validator.CustomersValidator
 import by.kabral.ordertrack.dto.RemovedEntityDto
+import by.kabral.ordertrack.dto.CustomerExistenceDto
 import by.kabral.ordertrack.exception.EntityNotFoundException
 
 import org.springframework.stereotype.Service
@@ -23,6 +24,10 @@ class CustomersService(
 
     fun findById(id: UUID) : CustomerDto = customersMapper.toDto(customersRepository.findById(id)
         .orElseThrow{ EntityNotFoundException(String.format(Message.USER_NOT_FOUND, id)) })
+
+    fun customerExists(id: UUID) : CustomerExistenceDto {
+        return CustomerExistenceDto(customersRepository.existsById(id))
+    }
 
     fun save(dto: CustomerDto) : CustomerDto {
         customersValidator.validate(dto)

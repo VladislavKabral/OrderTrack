@@ -1,5 +1,6 @@
 package by.kabral.ordertrack.productservice.service
 
+import by.kabral.ordertrack.dto.ProductAvailabilityDto
 import by.kabral.ordertrack.dto.RemovedEntityDto
 import by.kabral.ordertrack.exception.EntityNotFoundException
 import by.kabral.ordertrack.productservice.dto.ProductDto
@@ -10,6 +11,7 @@ import by.kabral.ordertrack.productservice.repository.ProductsRepository
 import by.kabral.ordertrack.productservice.util.Message.PRODUCT_NOT_FOUND
 import by.kabral.ordertrack.productservice.util.validator.ProductsValidator
 import org.springframework.stereotype.Service
+import java.math.BigDecimal
 import java.util.*
 
 @Service
@@ -23,10 +25,25 @@ class ProductsService(
         return ProductsDto(productsRepository.findAll().map { productsMapper.toDto(it) })
     }
 
-    fun isEnoughQuantity(id: UUID) : Boolean {
-        val product = findById(id)
+    fun isProductAvailable(id: UUID, count: Long, totalAmount: BigDecimal) : ProductAvailabilityDto {
+        if (!productsRepository.existsById(id)) {
+            return ProductAvailabilityDto(
+                isPresent = false,
+                isEnough = false,
+                isOrderRequestValid = false
+            )
+        }
 
-        return product.quantity.quantity > 0
+        val product = productsRepository.findById(id).get()
+
+        val productsCount = BigDecimal.valueOf(count)
+        val productPrice = product.price
+
+        return ProductAvailabilityDto(
+            isPresent = true,
+            isEnough = product.quantity.quantity >= count,
+            isOrderRequestValid = totalAmount.compareTo(productPrice.multiply(productsCount)) == 0
+        )
     }
 
     fun findById(id: UUID) : ProductDto {

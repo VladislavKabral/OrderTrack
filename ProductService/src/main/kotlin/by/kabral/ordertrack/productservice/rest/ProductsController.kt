@@ -1,5 +1,6 @@
 package by.kabral.ordertrack.productservice.rest
 
+import by.kabral.ordertrack.dto.ProductAvailabilityDto
 import by.kabral.ordertrack.dto.RemovedEntityDto
 import by.kabral.ordertrack.productservice.dto.ProductDto
 import by.kabral.ordertrack.productservice.dto.ProductsDto
@@ -8,6 +9,7 @@ import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import java.math.BigDecimal
 import java.util.*
 
 @RestController
@@ -25,8 +27,12 @@ class ProductsController(private val productsService: ProductsService) {
     }
 
     @GetMapping("/{id}/check")
-    fun checkQuantity(@PathVariable("id") id: UUID) : ResponseEntity<Boolean> {
-        return ResponseEntity.ok(productsService.isEnoughQuantity(id))
+    fun checkAvailability(
+        @PathVariable("id") id: UUID,
+        @RequestParam("count") count: Long,
+        @RequestParam("totalAmount") totalAmount: BigDecimal
+    ) : ResponseEntity<ProductAvailabilityDto> {
+        return ResponseEntity.ok(productsService.isProductAvailable(id, count, totalAmount))
     }
 
     @PostMapping

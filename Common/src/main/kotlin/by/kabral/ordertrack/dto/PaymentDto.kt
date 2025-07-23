@@ -1,11 +1,11 @@
-package by.kabral.ordertrack.paymentservice.dto
+package by.kabral.ordertrack.dto
 
 import by.kabral.ordertrack.enum.PaymentStatus
 import java.math.BigDecimal
 import java.util.*
 
 data class PaymentDto(
-    val accountId: UUID,
+    val customerId: UUID,
     val amount: BigDecimal,
     var status: PaymentStatus?
 )

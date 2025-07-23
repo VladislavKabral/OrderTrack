@@ -25,6 +25,7 @@ extra["springCloudVersion"] = "2025.0.0"
 object versions {
 	const val mapstruct = "1.6.3"
 	const val mongo = "5.5.1"
+	const val feignKotlin = "12.0"
 }
 
 dependencies {
@@ -41,6 +42,8 @@ dependencies {
 	implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
 	implementation("org.mapstruct:mapstruct:${versions.mapstruct}")
 	kapt("org.mapstruct:mapstruct-processor:${versions.mapstruct}")
+	implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
+	implementation("io.github.openfeign:feign-kotlin:${versions.feignKotlin}")
 	implementation(project(":Common"))
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
