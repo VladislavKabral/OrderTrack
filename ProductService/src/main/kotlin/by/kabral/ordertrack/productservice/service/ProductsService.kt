@@ -1,6 +1,8 @@
 package by.kabral.ordertrack.productservice.service
 
+import by.kabral.ordertrack.dto.ProductAvailabilityDto
 import by.kabral.ordertrack.dto.RemovedEntityDto
+import by.kabral.ordertrack.dto.SoldProductDto
 import by.kabral.ordertrack.exception.EntityNotFoundException
 import by.kabral.ordertrack.productservice.dto.ProductDto
 import by.kabral.ordertrack.productservice.dto.ProductsDto
@@ -10,23 +12,40 @@ import by.kabral.ordertrack.productservice.repository.ProductsRepository
 import by.kabral.ordertrack.productservice.util.Message.PRODUCT_NOT_FOUND
 import by.kabral.ordertrack.productservice.util.validator.ProductsValidator
 import org.springframework.stereotype.Service
+import java.math.BigDecimal
 import java.util.*
 
 @Service
 class ProductsService(
     private val productsRepository: ProductsRepository,
     private val productsMapper: ProductsMapper,
-    private val productsValidator: ProductsValidator
+    private val productsValidator: ProductsValidator,
+    private val cacheService: CacheService
 ) {
 
     fun findAll() : ProductsDto {
         return ProductsDto(productsRepository.findAll().map { productsMapper.toDto(it) })
     }
 
-    fun isEnoughQuantity(id: UUID) : Boolean {
-        val product = findById(id)
+    fun isProductAvailable(id: UUID, count: Long, totalAmount: BigDecimal) : ProductAvailabilityDto {
+        if (!productsRepository.existsById(id)) {
+            return ProductAvailabilityDto(
+                isPresent = false,
+                isEnough = false,
+                isOrderRequestValid = false
+            )
+        }
 
-        return product.quantity.quantity > 0
+        val product = productsRepository.findById(id).get()
+
+        val productsCount = BigDecimal.valueOf(count)
+        val productPrice = product.price
+
+        return ProductAvailabilityDto(
+            isPresent = true,
+            isEnough = product.quantity.quantity >= count,
+            isOrderRequestValid = totalAmount.compareTo(productPrice.multiply(productsCount)) == 0
+        )
     }
 
     fun findById(id: UUID) : ProductDto {
@@ -57,6 +76,21 @@ class ProductsService(
         entity.price = dto.price
         entity.quantity.quantity = dto.quantity.quantity
 
+        cacheService.deleteCachedValue(id)
+
+        return productsMapper.toDto(productsRepository.save(entity))
+    }
+
+    fun updateCount(product: SoldProductDto) : ProductDto {
+        if (!productsRepository.existsById(product.id)) {
+            throw EntityNotFoundException(String.format(PRODUCT_NOT_FOUND, product.id))
+        }
+
+        val entity = productsRepository.findById(product.id).get()
+        entity.quantity.quantity -= product.count
+
+        cacheService.deleteCachedValue(entity.id!!)
+
         return productsMapper.toDto(productsRepository.save(entity))
     }
 
@@ -66,6 +100,7 @@ class ProductsService(
         }
 
         productsRepository.deleteById(id)
+        cacheService.deleteCachedValue(id)
 
         return RemovedEntityDto(id)
     }

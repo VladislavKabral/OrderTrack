@@ -1,0 +1,26 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: PaymentService
+
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    new-user-topic-name: ordertrack.newuser
+    removed-user-topic-name: ordertrack.removeduser
+    new-user-group-id: ordertrack.newuser.group
+    value_default_type: by.kabral.ordertrack.dto.AccountDto
+    trusted_packages: by.kabral.ordertrack.*
+    partitions-count: 1
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
