@@ -14,6 +14,7 @@ spring:
   kafka:
     bootstrap-servers: localhost:9092
     new-user-topic-name: ordertrack.newuser
+    removed-user-topic-name: ordertrack.removeduser
     new-user-group-id: ordertrack.newuser.group
     value_default_type: by.kabral.ordertrack.dto.AccountDto
     trusted_packages: by.kabral.ordertrack.*

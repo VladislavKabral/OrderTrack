@@ -7,6 +7,7 @@ import org.springframework.boot.context.properties.bind.ConstructorBinding
 data class KafkaProperties @ConstructorBinding constructor(
     val bootstrapServers: String,
     val newUserTopicName: String,
+    val removedUserTopicName: String,
     val newUserGroupId: String,
     val valueDefaultType: String,
     val trustedPackages: String

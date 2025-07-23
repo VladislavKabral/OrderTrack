@@ -5,8 +5,8 @@ import java.math.BigDecimal
 import java.util.*
 
 data class AccountDto(
-    var id: UUID?,
+    var id: UUID? = null,
     val customerId: UUID,
-    val balance: BigDecimal?,
-    var status: AccountStatus?
+    val balance: BigDecimal? = null,
+    var status: AccountStatus? = null
 )

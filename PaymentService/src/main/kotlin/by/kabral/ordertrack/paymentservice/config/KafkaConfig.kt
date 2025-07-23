@@ -24,6 +24,14 @@ class KafkaConfig(private val kafkaProperties: KafkaProperties) {
     }
 
     @Bean
+    fun removedUserTopic() : NewTopic {
+        return TopicBuilder
+            .name(kafkaProperties.removedUserTopicName)
+            .partitions(kafkaProperties.partitionsCount)
+            .build()
+    }
+
+    @Bean
     fun consumerFactory() : ConsumerFactory<String, AccountDto> {
         val props = HashMap<String, Any>()
 

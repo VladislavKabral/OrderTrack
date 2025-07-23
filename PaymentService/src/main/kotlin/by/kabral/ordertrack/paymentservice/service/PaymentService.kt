@@ -99,4 +99,15 @@ class PaymentService(
         return accountsMapper.toDto(accountsRepository.save(account))
     }
 
+    fun archiveAccount(customerId: UUID) : AccountDto {
+        if (!accountsRepository.existsByCustomerId(customerId)) {
+            throw EntityNotFoundException(String.format(CUSTOMER_DOES_NOT_HAVE_ACCOUNT, customerId))
+        }
+
+        val account = accountsRepository.findByCustomerId(customerId).get()
+        account.status = AccountStatus.ARCHIVED
+
+        return accountsMapper.toDto(accountsRepository.save(account))
+    }
+
 }

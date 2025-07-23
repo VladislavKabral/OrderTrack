@@ -1,5 +1,6 @@
 package by.kabral.ordertrack.customerservice.service
 
+import by.kabral.ordertrack.customerservice.config.prop.KafkaProperties
 import by.kabral.ordertrack.customerservice.dto.CustomerDto
 import by.kabral.ordertrack.customerservice.dto.CustomersDto
 import by.kabral.ordertrack.customerservice.kafka.KafkaProducer
@@ -21,7 +22,8 @@ class CustomersService(
     private val customersMapper: CustomersMapper,
     private val customersValidator: CustomersValidator,
     private val kafkaProducer: KafkaProducer,
-    private val cacheService: CacheService
+    private val cacheService: CacheService,
+    private val kafkaProperties: KafkaProperties
 ) {
 
     fun findAll() : CustomersDto = CustomersDto(customersRepository.findAll().map { customersMapper.toDto(it) })
@@ -44,7 +46,7 @@ class CustomersService(
             balance = null,
             status = null
         )
-        kafkaProducer.send(account)
+        kafkaProducer.send(kafkaProperties.newUserTopicName, account)
 
         return newCustomer
     }
@@ -68,6 +70,9 @@ class CustomersService(
 
         customersRepository.deleteById(id)
         cacheService.deleteCachedValue(id)
+
+        val removedUserAccount = AccountDto(customerId = id)
+        kafkaProducer.send(kafkaProperties.removedUserTopicName, removedUserAccount)
 
         return RemovedEntityDto(id)
     }

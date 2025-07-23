@@ -12,7 +12,15 @@ class KafkaConsumer(private val paymentService: PaymentService) {
         topics = ["ordertrack.newuser"],
         groupId = "ordertrack.newuser.group",
         containerFactory = "userKafkaListenerContainerFactory")
-    fun listen(account: AccountDto) {
+    fun handleNewUserTopic(account: AccountDto) {
         paymentService.createAccount(account)
+    }
+
+    @KafkaListener(
+        topics = ["ordertrack.removeduser"],
+        groupId = "ordertrack.removeduser.group",
+        containerFactory = "userKafkaListenerContainerFactory")
+    fun handleRemovedUserTopic(account: AccountDto) {
+        paymentService.archiveAccount(account.customerId)
     }
 }

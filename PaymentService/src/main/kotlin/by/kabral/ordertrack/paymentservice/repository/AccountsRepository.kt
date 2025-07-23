@@ -11,5 +11,6 @@ import java.util.UUID
 interface AccountsRepository : JpaRepository<Account, UUID> {
     fun existsByCustomerId(customerId: UUID) : Boolean
     fun existsByCustomerIdAndStatus(customerId: UUID, status: AccountStatus) : Boolean
+    fun findByCustomerId(customerId: UUID) : Optional<Account>
     fun findByCustomerIdAndStatus(customerId: UUID, status: AccountStatus) : Optional<Account>
 }
