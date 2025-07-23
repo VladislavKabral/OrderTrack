@@ -1,6 +1,7 @@
 package by.kabral.ordertrack.orderservice.service
 
 import by.kabral.ordertrack.dto.PaymentDto
+import by.kabral.ordertrack.dto.SoldProductDto
 import by.kabral.ordertrack.enums.PaymentStatus
 import by.kabral.ordertrack.exception.EntityNotFoundException
 import by.kabral.ordertrack.orderservice.client.CustomerServiceClient
@@ -16,7 +17,10 @@ import by.kabral.ordertrack.orderservice.util.Message.ORDER_NOT_FOUND
 import by.kabral.ordertrack.orderservice.util.Message.PRODUCT_NOT_FOUND
 import by.kabral.ordertrack.util.Constant.CUSTOMER_EXISTENCE_CACHE
 import by.kabral.ordertrack.util.Constant.PRODUCT_AVAILABILITY_CACHE
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
+import org.springframework.web.client.RestClient
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -27,7 +31,9 @@ class OrdersService(
     private val customerServiceClient: CustomerServiceClient,
     private val productServiceClient: ProductServiceClient,
     private val paymentServiceClient: PaymentServiceClient,
-    private val cacheService: CacheService
+    private val cacheService: CacheService,
+    private val restClient: RestClient,
+    @Value("\${client.product-service-uri}") val productServiceURI: String
 ) {
 
     fun findAll() : OrdersDto {
@@ -70,7 +76,10 @@ class OrdersService(
                 count = order.count,
                 totalAmount = order.totalAmount
             )
-            cacheService.put(productAvailabilityKey, productAvailability)
+
+            if (productAvailability.isEnough && productAvailability.isOrderRequestValid) {
+                cacheService.put(productAvailabilityKey, productAvailability)
+            }
         }
         if (!productAvailability.isPresent) {
             throw EntityNotFoundException(String.format(PRODUCT_NOT_FOUND, order.productId))
@@ -90,12 +99,25 @@ class OrdersService(
         val paymentResponse = paymentServiceClient.makePayment(payment)
 
         when (paymentResponse.status) {
-            PaymentStatus.SUCCESSFULLY -> order.status = OrderStatus.PAID
+            PaymentStatus.SUCCESSFULLY -> {
+                order.status = OrderStatus.PAID
+                updateProductCount(order.productId, order.count)
+            }
             PaymentStatus.FAILED -> order.status = OrderStatus.FAILED
             PaymentStatus.NOT_ENOUGH_MONEY -> order.status = OrderStatus.NOT_ENOUGH_MONEY
             else -> order.status = OrderStatus.FAILED
         }
 
         return ordersMapper.toDto(ordersRepository.save(order))
+    }
+
+    private fun updateProductCount(productId: UUID, productCount: Long) {
+        val soldProduct = SoldProductDto(productId, productCount)
+        restClient.put()
+            .uri(productServiceURI)
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(soldProduct)
+            .retrieve()
+            .toBodilessEntity()
     }
 }

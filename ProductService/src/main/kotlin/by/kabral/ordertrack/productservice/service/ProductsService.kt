@@ -2,6 +2,7 @@ package by.kabral.ordertrack.productservice.service
 
 import by.kabral.ordertrack.dto.ProductAvailabilityDto
 import by.kabral.ordertrack.dto.RemovedEntityDto
+import by.kabral.ordertrack.dto.SoldProductDto
 import by.kabral.ordertrack.exception.EntityNotFoundException
 import by.kabral.ordertrack.productservice.dto.ProductDto
 import by.kabral.ordertrack.productservice.dto.ProductsDto
@@ -76,6 +77,19 @@ class ProductsService(
         entity.quantity.quantity = dto.quantity.quantity
 
         cacheService.deleteCachedValue(id)
+
+        return productsMapper.toDto(productsRepository.save(entity))
+    }
+
+    fun updateCount(product: SoldProductDto) : ProductDto {
+        if (!productsRepository.existsById(product.id)) {
+            throw EntityNotFoundException(String.format(PRODUCT_NOT_FOUND, product.id))
+        }
+
+        val entity = productsRepository.findById(product.id).get()
+        entity.quantity.quantity -= product.count
+
+        cacheService.deleteCachedValue(entity.id!!)
 
         return productsMapper.toDto(productsRepository.save(entity))
     }

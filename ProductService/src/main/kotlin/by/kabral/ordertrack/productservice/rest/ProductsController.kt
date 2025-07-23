@@ -2,6 +2,7 @@ package by.kabral.ordertrack.productservice.rest
 
 import by.kabral.ordertrack.dto.ProductAvailabilityDto
 import by.kabral.ordertrack.dto.RemovedEntityDto
+import by.kabral.ordertrack.dto.SoldProductDto
 import by.kabral.ordertrack.productservice.dto.ProductDto
 import by.kabral.ordertrack.productservice.dto.ProductsDto
 import by.kabral.ordertrack.productservice.service.ProductsService
@@ -44,6 +45,11 @@ class ProductsController(private val productsService: ProductsService) {
     fun updateProduct(@PathVariable("id") id: UUID,
                       @RequestBody @Valid product: ProductDto) : ResponseEntity<ProductDto> {
         return ResponseEntity.ok(productsService.update(id, product))
+    }
+
+    @PutMapping
+    fun updateProductCount(@RequestBody product: SoldProductDto) : ResponseEntity<ProductDto> {
+        return ResponseEntity.ok(productsService.updateCount(product))
     }
 
     @DeleteMapping("/{id}")
