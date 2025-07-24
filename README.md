@@ -54,7 +54,7 @@ This project provides a REST API for working with products, customers, orders an
    DB_PORT='Your database port'
    ```
 
-5. Then you need to start Kafka, MongoDB and Redis. The easiest way to do it is to use Docker containers.  
+5. Then you need to start Kafka, MongoDB, Redis and MailDev. The easiest way to do it is to use Docker containers.  
    Redis:
    ```bash
    docker run -d --name redis -p 6379:6379 redis:latest
@@ -68,6 +68,10 @@ This project provides a REST API for working with products, customers, orders an
    docker run -d --name zookeeper -p 2181:2181 -e ZOOKEEPER_CLIENT_PORT=2181 -e ZOOKEEPER_TICK_TIME=2000 confluentinc/cp-zookeeper:latest
    
    docker run -d --name kafka --link zookeeper -p 9092:9092 -e KAFKA_BROKER_ID=1 -e KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181 -e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092 -e KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT -e KAFKA_INTER_BROKER_LISTENER_NAME=PLAINTEXT -e KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1 confluentinc/cp-kafka:latest
+   ```
+   MailDev:
+   ```bash
+   docker run -p 1080:1080 -p 1025:1025 maildev/maildev
    ```
    Please, check the commands before running.<br><br> 
     
@@ -120,6 +124,7 @@ P.S. You can find DTO schemes for POST and PUT requests in the project's structu
 * Eureka server
 * API Gateway
 * OpenFeign
+* MailDev
 
 ---
 

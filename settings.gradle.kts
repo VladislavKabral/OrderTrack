@@ -7,7 +7,8 @@ include(
     ":ApiGateway",
     ":ProductService",
     ":PaymentService",
-    ":OrderService")
+    ":OrderService",
+    ":NotificationService")
 
 project(":Common").projectDir = file("Common")
 project(":CustomerService").projectDir = file("CustomerService")
@@ -16,3 +17,4 @@ project(":EurekaServer").projectDir = file("EurekaServer")
 project(":ProductService").projectDir = file("ProductService")
 project(":PaymentService").projectDir = file("PaymentService")
 project(":OrderService").projectDir = file("OrderService")
+project(":NotificationService").projectDir = file("NotificationService")

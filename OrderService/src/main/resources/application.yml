@@ -16,6 +16,13 @@ spring:
       host: host.docker.internal
       port: 6379
 
+  kafka:
+    bootstrap-servers: localhost:9092
+    new-order-topic-name: ordertrack.neworder
+    new-order-group-id: ordertrack.orderuser.group
+    value_default_type: by.kabral.ordertrack.dto.ProcessedOrderDto
+    trusted_packages: by.kabral.ordertrack.*
+
 eureka:
   client:
     service-url:

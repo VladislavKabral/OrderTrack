@@ -33,12 +33,14 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-validation")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.boot:spring-boot-starter-data-redis")
+	implementation("org.springframework.boot:spring-boot-configuration-processor")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("io.mongock:mongock-springboot:${versions.mongo}")
 	implementation("io.mongock:mongodb-springdata-v4-driver:${versions.mongo}")
 	implementation("org.mongodb:mongodb-driver-sync:${versions.mongo}")
 	implementation("org.mongodb:mongodb-driver-core:${versions.mongo}")
 	implementation("org.mongodb:bson:${versions.mongo}")
+	implementation("org.springframework.kafka:spring-kafka")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
 	implementation("org.mapstruct:mapstruct:${versions.mapstruct}")
@@ -48,6 +50,7 @@ dependencies {
 	implementation(project(":Common"))
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+	testImplementation("org.springframework.kafka:spring-kafka-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 

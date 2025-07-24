@@ -1,6 +1,7 @@
 package by.kabral.ordertrack.orderservice.service
 
 import by.kabral.ordertrack.dto.PaymentDto
+import by.kabral.ordertrack.dto.ProcessedOrderDto
 import by.kabral.ordertrack.dto.SoldProductDto
 import by.kabral.ordertrack.enums.PaymentStatus
 import by.kabral.ordertrack.exception.EntityNotFoundException
@@ -9,7 +10,9 @@ import by.kabral.ordertrack.orderservice.client.PaymentServiceClient
 import by.kabral.ordertrack.orderservice.client.ProductServiceClient
 import by.kabral.ordertrack.orderservice.dto.OrderDto
 import by.kabral.ordertrack.orderservice.dto.OrdersDto
+import by.kabral.ordertrack.orderservice.kafka.KafkaProducer
 import by.kabral.ordertrack.orderservice.mapper.OrdersMapper
+import by.kabral.ordertrack.orderservice.model.Order
 import by.kabral.ordertrack.orderservice.model.OrderStatus
 import by.kabral.ordertrack.orderservice.repository.OrdersRepository
 import by.kabral.ordertrack.orderservice.util.Message.CUSTOMER_NOT_FOUND
@@ -22,7 +25,7 @@ import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestClient
 import java.time.LocalDateTime
-import java.util.UUID
+import java.util.*
 
 @Service
 class OrdersService(
@@ -33,6 +36,7 @@ class OrdersService(
     private val paymentServiceClient: PaymentServiceClient,
     private val cacheService: CacheService,
     private val restClient: RestClient,
+    private val kafkaProducer: KafkaProducer,
     @Value("\${client.product-service-uri}") val productServiceURI: String
 ) {
 
@@ -102,6 +106,7 @@ class OrdersService(
             PaymentStatus.SUCCESSFULLY -> {
                 order.status = OrderStatus.PAID
                 updateProductCount(order.productId, order.count)
+                initNotification(order)
             }
             PaymentStatus.FAILED -> order.status = OrderStatus.FAILED
             PaymentStatus.NOT_ENOUGH_MONEY -> order.status = OrderStatus.NOT_ENOUGH_MONEY
@@ -119,5 +124,21 @@ class OrdersService(
             .body(soldProduct)
             .retrieve()
             .toBodilessEntity()
+    }
+
+    private fun initNotification(order: Order) {
+        val product = productServiceClient.getProduct(order.productId)
+        val customer = customerServiceClient.getCustomer(order.customerId)
+
+        val processedOrder = ProcessedOrderDto(
+            orderId = order.id!!,
+            customer = customer,
+            productName = product.name,
+            productCount = order.count,
+            totalAmount = order.totalAmount,
+            createdAt = order.createdAt!!
+        )
+
+        kafkaProducer.send(processedOrder)
     }
 }
